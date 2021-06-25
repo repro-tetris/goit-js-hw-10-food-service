@@ -1,8 +1,4 @@
-const Theme = {
-  LIGHT: 'light-theme',
-  DARK: 'dark-theme',
-  PARAM_NAME: 'theme',
-};
+import { Theme } from '../utils/variables';
 
 let switchEl;
 let bodyEl;
@@ -10,9 +6,7 @@ let isLightTheme = true;
 
 const getCurrentTheme = () => (isLightTheme ? Theme.LIGHT : Theme.DARK);
 
-const setCurrentTheme = theme => (isLightTheme = theme === Theme.LIGHT);
-
-export function registerThemeSwitcher(checkboxId) {
+export function setThemeSwitcher(checkboxId) {
   switchEl = document.querySelector(checkboxId);
   switchEl.addEventListener('input', switchElChecked);
   bodyEl = document.querySelector('body');
@@ -20,17 +14,15 @@ export function registerThemeSwitcher(checkboxId) {
   restoreTheme();
 }
 
-function switchElChecked(e) {
-  isLightTheme = !isLightTheme;
-  changeTheme(getCurrentTheme());
+function switchElChecked() {
+  toggleTheme();
   saveCurrentTheme();
 }
 
-function changeTheme(newTheme) {
-  const classForRemove = newTheme === Theme.LIGHT ? Theme.DARK : Theme.LIGHT;
-  console.log(classForRemove);
-  bodyEl.classList.remove(classForRemove);
-  bodyEl.classList.add(newTheme);
+function toggleTheme() {
+  bodyEl.classList.remove(getCurrentTheme());
+  isLightTheme = !isLightTheme;
+  bodyEl.classList.add(getCurrentTheme());
 }
 
 function saveCurrentTheme() {
@@ -41,9 +33,8 @@ function restoreTheme() {
   const curTheme = localStorage.getItem(Theme.PARAM_NAME);
 
   if (curTheme) {
-    changeTheme(curTheme);
-    setCurrentTheme(curTheme);
-
+    isLightTheme = curTheme === Theme.DARK;
+    toggleTheme();
     switchEl.checked = !isLightTheme;
   }
 }
